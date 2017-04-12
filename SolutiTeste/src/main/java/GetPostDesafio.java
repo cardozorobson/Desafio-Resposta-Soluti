@@ -28,7 +28,7 @@ public class GetPostDesafio {
     static URLConnection con;
 
     public static String GetDesafio() throws Exception {
-        // Create a trust manager that does not validate certificate chains
+        // PARA NAO VALIDAR A CADEIA DE CERTIFICADOS
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
             @Override
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -45,12 +45,12 @@ public class GetPostDesafio {
         }
         };
 
-        // Install the all-trusting trust manager
+        
         SSLContext sc = SSLContext.getInstance("SSL");
         sc.init(null, trustAllCerts, new java.security.SecureRandom());
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-        // Create all-trusting host name verifier
+        
         HostnameVerifier allHostsValid = new HostnameVerifier() {
             @Override
             public boolean verify(String hostname, SSLSession session) {
@@ -58,7 +58,7 @@ public class GetPostDesafio {
             }
         };
 
-        // Install the all-trusting host verifier
+        // HOST CONFIAVEL
         HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
         int ch;
         String text = "";

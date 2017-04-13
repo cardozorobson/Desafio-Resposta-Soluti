@@ -1,32 +1,27 @@
 
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.CMSTypedData;
-import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.util.Store;
-import org.bouncycastle.util.encoders.Base64;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 /**
  *
  * @author robsoncardozo
@@ -53,24 +48,17 @@ public class buttonsFrame extends javax.swing.JFrame {
         validateDesafio = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         textDesafio = new javax.swing.JTextArea();
-        buttonClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        buttonSolicitar.setText("SOLICITAR DESAFIO");
-        buttonSolicitar.setToolTipText("");
+        buttonSolicitar.setText("Solicitar Desafio");
         buttonSolicitar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 buttonSolicitarMouseClicked(evt);
             }
         });
-        buttonSolicitar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonSolicitarActionPerformed(evt);
-            }
-        });
 
-        validateDesafio.setText("ASSINAR DESAFIO E VALIDAR");
+        validateDesafio.setText("Validar Desafio");
         validateDesafio.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 validateDesafioMouseClicked(evt);
@@ -81,35 +69,25 @@ public class buttonsFrame extends javax.swing.JFrame {
         textDesafio.setRows(5);
         jScrollPane1.setViewportView(textDesafio);
 
-        buttonClose.setText("CLOSE");
-        buttonClose.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                buttonCloseMouseClicked(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 189, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(buttonSolicitar)
-                                .addGap(218, 218, 218))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(buttonClose)
-                                .addGap(247, 247, 247))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(validateDesafio)
-                                .addGap(170, 170, 170))))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(124, 124, 124)
+                                .addComponent(buttonSolicitar))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(130, 130, 130)
+                                .addComponent(validateDesafio)))
+                        .addGap(0, 124, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -120,52 +98,57 @@ public class buttonsFrame extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(validateDesafio)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonClose)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    //AÇÃO DO BOTÃO "SOLICITAR DESAFIO"
-    private void buttonSolicitarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonSolicitarMouseClicked
-        try {
-            //COLOCA O TEXTO NA TELA DE ACORDO COM O RETORNO DADO EM GetDesafio
-            textDesafio.setText(GetPostDesafio.GetDesafio());
-        } catch (Exception ex) {
-            Logger.getLogger(buttonsFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
-    }//GEN-LAST:event_buttonSolicitarMouseClicked
+   private void buttonSolicitarMouseClicked(java.awt.event.MouseEvent evt) throws KeyManagementException, NoSuchAlgorithmException {
+            
+        TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+                @Override
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+                @Override
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+                @Override
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }
+        };
+        
+         SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+ 
+        // Create all-trusting host name verifier
+        HostnameVerifier allHostsValid = new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        };
+       
+       HttpResponse<JsonNode> textHTTP = null;
+            
+            try {
+                textHTTP = Unirest.get("https://api-prova.lab.ca.inf.br:9445/desafio")
+                        .asJson();
+                        textHTTP.getBody().getObject();
+                        
+                        
+            } catch (UnirestException ex) {
+                Logger.getLogger(buttonsFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        textDesafio.setText(textHTTP.getBody().getObject().toString());
+    }
 
     private void validateDesafioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validateDesafioMouseClicked
-       try {
-        
-       //assinaBc signer = new assinaBc();
-       //KeyStore keyStore = signer.loadKeyStore();
-       //CMSSignedDataGenerator signatureGenerator = signer.setUpProvider(keyStore);
-        System.out.println("\n" + GetPostDesafio.recebeJson);
-         
-       //byte[] signedBytes = signer.signPkcs7(GetPostDesafio.recebeJson.getBytes("UTF-8"), signatureGenerator);
-       //System.out.println("Signed Encoded Bytes: " + new String(Base64.encode(signedBytes)));
-            
-        } catch (Exception ex) {
-            Logger.getLogger(buttonsFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-       
-        
-    }//GEN-LAST:event_validateDesafioMouseClicked
-
-    private void buttonCloseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonCloseMouseClicked
         // TODO add your handling code here:
-        System.exit(0);
-    }//GEN-LAST:event_buttonCloseMouseClicked
-
-    private void buttonSolicitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSolicitarActionPerformed
-       
-    }//GEN-LAST:event_buttonSolicitarActionPerformed
+    }//GEN-LAST:event_validateDesafioMouseClicked
 
     /**
      * @param args the command line arguments
@@ -197,13 +180,12 @@ public class buttonsFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-
+                new buttonsFrame().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonClose;
     private javax.swing.JButton buttonSolicitar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea textDesafio;

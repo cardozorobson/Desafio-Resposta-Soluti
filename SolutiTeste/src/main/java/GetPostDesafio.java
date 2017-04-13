@@ -28,7 +28,11 @@ import org.json.simple.parser.ParseException;
  * @author robsoncardozo
  */
 public class GetPostDesafio {
-
+    
+    public static String text = "";
+    
+    public static String recebeJson;
+    
     public static String recebeDesafio;
     
     static URL url;
@@ -70,7 +74,7 @@ public class GetPostDesafio {
         HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
         int ch;
         
-        String text = "";
+        
         url = new URL("https://api-prova.lab.ca.inf.br:9445/desafio");
         con = url.openConnection();
         Reader reader = new InputStreamReader(con.getInputStream());
@@ -79,18 +83,24 @@ public class GetPostDesafio {
             if (ch == -1) {
                 break;
             }
-            //System.out.print((char) ch);
+            
             text = text + (char) ch;
         }
       
         JSONObject parseJson = (JSONObject)new JSONParser().parse(text);
         
         
-        System.out.println(parseJson.get("desafio"));
+       recebeJson =  (String) parseJson.get("desafio");
+        
+        
+        
            
         
         
         recebeDesafio = text;
+       
+        
+        
         return text;
         
         
@@ -99,4 +109,6 @@ public class GetPostDesafio {
     public static void postDesafio() {
 
     }
+    
+    
 }

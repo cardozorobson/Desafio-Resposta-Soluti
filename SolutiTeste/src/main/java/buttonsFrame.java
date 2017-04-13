@@ -143,13 +143,13 @@ public class buttonsFrame extends javax.swing.JFrame {
     private void validateDesafioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validateDesafioMouseClicked
        try {
         
-       // assinaBc signer = new assinaBc();
-        //KeyStore keyStore = signer.loadKeyStore();
-        //CMSSignedDataGenerator signatureGenerator = signer.setUpProvider(keyStore);
-           System.out.println(GetPostDesafio.recebeDesafio);
+       //assinaBc signer = new assinaBc();
+       //KeyStore keyStore = signer.loadKeyStore();
+       //CMSSignedDataGenerator signatureGenerator = signer.setUpProvider(keyStore);
+        System.out.println("\n" + GetPostDesafio.recebeJson);
          
-        //byte[] signedBytes = signer.signPkcs7(content.getBytes("UTF-8"), signatureGenerator);
-        //System.out.println("Signed Encoded Bytes: " + new String(Base64.encode(signedBytes)));
+       //byte[] signedBytes = signer.signPkcs7(GetPostDesafio.recebeJson.getBytes("UTF-8"), signatureGenerator);
+       //System.out.println("Signed Encoded Bytes: " + new String(Base64.encode(signedBytes)));
             
         } catch (Exception ex) {
             Logger.getLogger(buttonsFrame.class.getName()).log(Level.SEVERE, null, ex);

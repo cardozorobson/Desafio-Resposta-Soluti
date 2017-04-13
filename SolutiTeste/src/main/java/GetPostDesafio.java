@@ -6,6 +6,7 @@
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -16,6 +17,11 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.security.cert.X509Certificate;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.ParseException;
+
 
 /**
  *
@@ -23,12 +29,14 @@ import java.security.cert.X509Certificate;
  */
 public class GetPostDesafio {
 
+    public static String recebeDesafio;
+    
     static URL url;
 
     static URLConnection con;
 
     public static String GetDesafio() throws Exception {
-        // PARA NAO VALIDAR A CADEIA DE CERTIFICADOS
+        // Create a trust manager that does not validate certificate chains
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
             @Override
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -45,12 +53,12 @@ public class GetPostDesafio {
         }
         };
 
-        
+        // Install the all-trusting trust manager
         SSLContext sc = SSLContext.getInstance("SSL");
         sc.init(null, trustAllCerts, new java.security.SecureRandom());
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-        
+        // Create all-trusting host name verifier
         HostnameVerifier allHostsValid = new HostnameVerifier() {
             @Override
             public boolean verify(String hostname, SSLSession session) {
@@ -58,9 +66,10 @@ public class GetPostDesafio {
             }
         };
 
-        // HOST CONFIAVEL
+        // Install the all-trusting host verifier
         HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
         int ch;
+        
         String text = "";
         url = new URL("https://api-prova.lab.ca.inf.br:9445/desafio");
         con = url.openConnection();
@@ -70,10 +79,21 @@ public class GetPostDesafio {
             if (ch == -1) {
                 break;
             }
-            System.out.print((char) ch);
+            //System.out.print((char) ch);
             text = text + (char) ch;
         }
+      
+        JSONObject parseJson = (JSONObject)new JSONParser().parse(text);
+        
+        
+        System.out.println(parseJson.get("desafio"));
+           
+        
+        
+        recebeDesafio = text;
         return text;
+        
+        
     }
 
     public static void postDesafio() {

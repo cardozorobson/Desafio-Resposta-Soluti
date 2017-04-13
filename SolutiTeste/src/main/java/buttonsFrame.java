@@ -1,7 +1,27 @@
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.CMSTypedData;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.util.Store;
+import org.bouncycastle.util.encoders.Base64;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -37,14 +57,20 @@ public class buttonsFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        buttonSolicitar.setText("Solicitar Desafio");
+        buttonSolicitar.setText("SOLICITAR DESAFIO");
+        buttonSolicitar.setToolTipText("");
         buttonSolicitar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 buttonSolicitarMouseClicked(evt);
             }
         });
+        buttonSolicitar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonSolicitarActionPerformed(evt);
+            }
+        });
 
-        validateDesafio.setText("Validar Desafio");
+        validateDesafio.setText("ASSINAR DESAFIO E VALIDAR");
         validateDesafio.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 validateDesafioMouseClicked(evt);
@@ -66,10 +92,6 @@ public class buttonsFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(buttonClose)
-                .addGap(247, 247, 247))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -77,14 +99,17 @@ public class buttonsFrame extends javax.swing.JFrame {
                         .addComponent(jScrollPane1)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 221, Short.MAX_VALUE)
+                        .addGap(0, 189, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(buttonSolicitar)
                                 .addGap(218, 218, 218))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(buttonClose)
+                                .addGap(247, 247, 247))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(validateDesafio)
-                                .addGap(217, 217, 217))))))
+                                .addGap(170, 170, 170))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,13 +141,31 @@ public class buttonsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonSolicitarMouseClicked
 
     private void validateDesafioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validateDesafioMouseClicked
-
+       try {
+        
+       // assinaBc signer = new assinaBc();
+        //KeyStore keyStore = signer.loadKeyStore();
+        //CMSSignedDataGenerator signatureGenerator = signer.setUpProvider(keyStore);
+           System.out.println(GetPostDesafio.recebeDesafio);
+         
+        //byte[] signedBytes = signer.signPkcs7(content.getBytes("UTF-8"), signatureGenerator);
+        //System.out.println("Signed Encoded Bytes: " + new String(Base64.encode(signedBytes)));
+            
+        } catch (Exception ex) {
+            Logger.getLogger(buttonsFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+        
     }//GEN-LAST:event_validateDesafioMouseClicked
 
     private void buttonCloseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonCloseMouseClicked
         // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_buttonCloseMouseClicked
+
+    private void buttonSolicitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSolicitarActionPerformed
+       
+    }//GEN-LAST:event_buttonSolicitarActionPerformed
 
     /**
      * @param args the command line arguments

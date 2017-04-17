@@ -34,19 +34,25 @@ import org.bouncycastle.util.encoders.Base64;
 public class assinaBc {
     
     
-    private static final String PATH_TO_KEYSTORE = "/home/robsoncardozo/Documentos/TesteSoluti/SolutiTeste/file.pfx";
-    private static final String KEY_ALIAS_IN_KEYSTORE = "teste uppercase01234567890";
+    public static String recebeCrip = "";
+    
+    
+    private static final String PATH_TO_KEYSTORE = "/home/robsoncardozo/Documentos/TesteSoluti/SolutiTeste/teste.p12";
+    private static final String KEY_ALIAS_IN_KEYSTORE = "1";
+    private static final String KEY_FILE = "/home/robsoncardozo/Documentos/TesteSoluti/SolutiTeste/private.key";
     private static final String KEYSTORE_PASSWORD = "123456";
-    private static final String SIGNATUREALGO = "SHA1withRSA";
+    private static final String SIGNATUREALGO = "SHA256withRSA";
 
     public assinaBc() {
     }
     
     KeyStore loadKeyStore() throws Exception {
 
-        KeyStore keystore = KeyStore.getInstance("JKS");
+        KeyStore keystore = KeyStore.getInstance("PKCS12");
         InputStream is = new FileInputStream(PATH_TO_KEYSTORE);
         keystore.load(is, KEYSTORE_PASSWORD.toCharArray());
+        String alias = keystore.aliases().nextElement().toString();
+        
         return keystore;
     }
     
@@ -64,6 +70,8 @@ public class assinaBc {
         Store certstore = new JcaCertStore(certlist);
 
         Certificate cert = keystore.getCertificate(KEY_ALIAS_IN_KEYSTORE);
+        
+        
 
         ContentSigner signer = new JcaContentSignerBuilder(SIGNATUREALGO).setProvider("BC").
                 build((PrivateKey) (keystore.getKey(KEY_ALIAS_IN_KEYSTORE, KEYSTORE_PASSWORD.toCharArray())));

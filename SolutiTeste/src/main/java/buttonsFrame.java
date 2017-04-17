@@ -1,27 +1,19 @@
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
+
+import com.google.gson.Gson;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
+import java.security.KeyStore;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.util.encoders.Base64;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author robsoncardozo
@@ -51,14 +43,20 @@ public class buttonsFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        buttonSolicitar.setText("Solicitar Desafio");
+        buttonSolicitar.setText("SOLICITAR DESAFIO");
+        buttonSolicitar.setToolTipText("");
         buttonSolicitar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 buttonSolicitarMouseClicked(evt);
             }
         });
+        buttonSolicitar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonSolicitarActionPerformed(evt);
+            }
+        });
 
-        validateDesafio.setText("Validar Desafio");
+        validateDesafio.setText("ASSINAR DESAFIO E VALIDAR");
         validateDesafio.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 validateDesafioMouseClicked(evt);
@@ -76,79 +74,89 @@ public class buttonsFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(124, 124, 124)
-                                .addComponent(buttonSolicitar))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(130, 130, 130)
-                                .addComponent(validateDesafio)))
-                        .addGap(0, 124, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1)))
+                        .addComponent(jScrollPane1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(170, 170, 170)
+                        .addComponent(validateDesafio)
+                        .addGap(0, 189, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(207, 207, 207)
+                .addComponent(buttonSolicitar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(buttonSolicitar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(validateDesafio)
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addComponent(buttonSolicitar, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(70, 70, 70)
+                .addComponent(validateDesafio, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-   private void buttonSolicitarMouseClicked(java.awt.event.MouseEvent evt) throws KeyManagementException, NoSuchAlgorithmException {
+    //AÇÃO DO BOTÃO "SOLICITAR DESAFIO"
+    private void buttonSolicitarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonSolicitarMouseClicked
+        try {
+            //COLOCA O TEXTO NA TELA DE ACORDO COM O RETORNO DADO EM GetDesafio
+            textDesafio.setText(GetPostDesafio.GetDesafio());
             
-        TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
-                @Override
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-                @Override
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
-                @Override
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-            }
-        };
-        
-         SSLContext sc = SSLContext.getInstance("SSL");
-        sc.init(null, trustAllCerts, new java.security.SecureRandom());
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
- 
-        // Create all-trusting host name verifier
-        HostnameVerifier allHostsValid = new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        };
-       
-       HttpResponse<JsonNode> textHTTP = null;
-            
-            try {
-                textHTTP = Unirest.get("https://api-prova.lab.ca.inf.br:9445/desafio")
-                        .asJson();
-                        textHTTP.getBody().getObject();
-                        
-                        
-            } catch (UnirestException ex) {
-                Logger.getLogger(buttonsFrame.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        textDesafio.setText(textHTTP.getBody().getObject().toString());
-    }
+        } catch (Exception ex) {
+            Logger.getLogger(buttonsFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+    }//GEN-LAST:event_buttonSolicitarMouseClicked
 
     private void validateDesafioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validateDesafioMouseClicked
-        // TODO add your handling code here:
+        try {
+            
+            //INSTANCIA A CLASSE PARA ASSINATURA PKCS7
+            assinaBc signer = new assinaBc();
+            KeyStore keyStore = signer.loadKeyStore();
+            CMSSignedDataGenerator signatureGenerator = signer.setUpProvider(keyStore);
+            
+
+            
+            byte[] signedBytes = signer.signPkcs7(GetPostDesafio.convertStringToByteArray(), signatureGenerator);
+            String recebeCrip = new String(Base64.encode(signedBytes));
+            
+            
+            String assinaturaFormat = recebeCrip.replaceAll("(.{64})", "$1\n");
+            
+            String resposta = ("-----BEGIN PKCS7-----\n" + assinaturaFormat + "\n-----END PKCS7-----");
+            
+            //System.out.println(resposta);
+            
+           
+            Gson gson = new Gson();
+            GetPostDesafio.respostaJson = gson.toJson(resposta);
+            System.out.println(GetPostDesafio.respostaJson);
+            GetPostDesafio.postDesafio();
+            
+            
+            
+               
+            
+            
+            
+
+        } catch (Exception ex) {
+            Logger.getLogger(buttonsFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
     }//GEN-LAST:event_validateDesafioMouseClicked
+
+    private void buttonSolicitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSolicitarActionPerformed
+
+    }//GEN-LAST:event_buttonSolicitarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -180,7 +188,7 @@ public class buttonsFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new buttonsFrame().setVisible(true);
+
             }
         });
     }

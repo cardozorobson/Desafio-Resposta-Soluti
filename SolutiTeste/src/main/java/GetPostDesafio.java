@@ -4,9 +4,10 @@
  * and open the template in the editor.
  */
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -19,8 +20,6 @@ import javax.net.ssl.X509TrustManager;
 import java.security.cert.X509Certificate;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.ParseException;
 
 
 /**
@@ -30,6 +29,8 @@ import org.json.simple.parser.ParseException;
 public class GetPostDesafio {
     
     public static String text = "";
+    
+    public static String respostaJson;
     
     public static String recebeJson;
     
@@ -85,12 +86,16 @@ public class GetPostDesafio {
             }
             
             text = text + (char) ch;
+            
         }
+            
       
         JSONObject parseJson = (JSONObject)new JSONParser().parse(text);
         
         
        recebeJson =  (String) parseJson.get("desafio");
+       
+       
         
         
         
@@ -106,7 +111,36 @@ public class GetPostDesafio {
         
     }
 
-    public static void postDesafio() {
+    public static void postDesafio() throws IOException {
+       
+        String url = "https://api-prova.lab.ca.inf.br:9445/desafio";
+        URL myurl = new URL(url);
+        HttpsURLConnection con = (HttpsURLConnection) myurl.openConnection();
+        con.setRequestMethod("POST");
+        String query = respostaJson;
+        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        con.setRequestProperty("Content-Type", "application/json");
+        
+        con.setDoOutput(true);
+        con.setDoInput(true);
+
+        try (DataOutputStream output = new DataOutputStream(con.getOutputStream())) {
+            output.writeBytes(query);
+        }
+        System.out.println("Resp Code:" + con.getResponseCode());
+        System.out.println("Resp Message:" + con.getResponseMessage());
+   
+
+    }
+    
+     public static byte [] convertStringToByteArray()
+    {
+
+        String stringToConvert = recebeJson;
+
+        byte[] theByteArray = stringToConvert.getBytes();
+
+        return theByteArray;
 
     }
     

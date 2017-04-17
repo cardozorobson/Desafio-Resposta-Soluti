@@ -6,7 +6,9 @@
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -18,6 +20,10 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.security.cert.X509Certificate;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
 
@@ -118,8 +124,8 @@ public class GetPostDesafio {
         HttpsURLConnection con = (HttpsURLConnection) myurl.openConnection();
         con.setRequestMethod("POST");
         String query = respostaJson;
-        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("Content-Type", "validation_messages");
+        con.setRequestProperty("Content-Type", "resposta");
         
         con.setDoOutput(true);
         con.setDoInput(true);
@@ -129,6 +135,11 @@ public class GetPostDesafio {
         }
         System.out.println("Resp Code:" + con.getResponseCode());
         System.out.println("Resp Message:" + con.getResponseMessage());
+        System.out.println(con.getHeaderFields());
+        //PrintWriter out = response.getWriter();
+        
+        
+        
    
 
     }

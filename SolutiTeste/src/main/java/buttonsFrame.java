@@ -137,7 +137,7 @@ public class buttonsFrame extends javax.swing.JFrame {
            
             Gson gson = new Gson();
             GetPostDesafio.respostaJson = gson.toJson(resposta);
-            System.out.println(GetPostDesafio.respostaJson);
+            //System.out.println(GetPostDesafio.respostaJson);
             GetPostDesafio.postDesafio();
             
             

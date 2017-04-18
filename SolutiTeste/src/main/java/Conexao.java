@@ -3,7 +3,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -20,28 +19,22 @@ import javax.net.ssl.X509TrustManager;
 import org.json.simple.parser.ParseException;
 
 public class Conexao {
-
-    public static String recebeValidacao = "";
+    
     public static StringBuilder sb = new StringBuilder();
-    public static String receiveJson = "";
-    public static String info = "";
-    public static String id = "";
+    public static String recebeValidacao = "";
+    public static String separaJson = "";
     public static String session_id = "";
 
     public Conexao() {
 
     }
 
-    /**
-     * Método que realiza uma requisição POST de Json para retornar uma String.
-     *
-     * @param urlString
-     * @param json
-     * @return
-     */
+    
+      //Método que realiza uma requisição POST de Json para retornar uma String.
+     
     public String requisicaoPost(final String urlString, final JSONObject json) {
 
-        String retorno = "";
+       
 
         HttpURLConnection urlConnection = null;
 
@@ -64,34 +57,33 @@ public class Conexao {
                 out.write(jsonParam.toString());
             }
 
-            int HttpResult = urlConnection.getResponseCode();
+            //int HttpResult = urlConnection.getResponseCode();
 
-            System.out.println(HttpResult);
+            //System.out.println(HttpResult); //Imprimir o codigo de resposta.
 
-            BufferedReader br = new BufferedReader(new InputStreamReader((urlConnection.getInputStream())));
-
-            String inputLine;
-            while ((inputLine = br.readLine()) != null) {
-                recebeValidacao += inputLine;
-                //System.out.println(inputLine);
-
+            try (BufferedReader br = new BufferedReader(new InputStreamReader((urlConnection.getInputStream())))) {
+                String inputLine;
+                while ((inputLine = br.readLine()) != null) {
+                    recebeValidacao += inputLine;
+                    //System.out.println(inputLine);
+                    
+                }
             }
 
-            br.close();
-
-            System.out.println(urlConnection.getResponseMessage());
+            //System.out.println(urlConnection.getResponseMessage());// imprimir a mensagem de resposta da requisição
             return urlConnection.getResponseMessage();
 
-        } catch (Exception e) {
+        } catch (IOException e) {
 
             System.err.println(e.toString());
-            return "Erro na conexão. Contate o Administrador.";
+            return "Erro na conexão.";
 
         }
     }
 
     public String requisicaoGet(final String urlFinal) throws NoSuchAlgorithmException, KeyManagementException, ParseException {
 
+        //IGNORAR CADEIA DE CERTIFICADO PARA SOLUCIONAR O ERRO SSL - INICIO
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
             @Override
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -125,7 +117,7 @@ public class Conexao {
         HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
         int ch;
 
-        String retorno = "";
+        //IGNORAR CADEIA DE CERTIFICADO PARA SOLUCIONAR O ERRO SSL - FIM
 
         StringBuilder sb = new StringBuilder();
         String http = "https://api-prova.lab.ca.inf.br:9445/desafio";
@@ -136,7 +128,7 @@ public class Conexao {
             URL url = new URL(http);
             urlConnection = (HttpURLConnection) url.openConnection();
             session_id = urlConnection.getHeaderField("Set-Cookie");
-            System.out.println(session_id);
+            //System.out.println(session_id);
 
             urlConnection.connect();
 
@@ -144,24 +136,23 @@ public class Conexao {
 
             if (HttpResult == HttpURLConnection.HTTP_OK) {
 
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
-                String line = "";
-
-                while ((line = br.readLine()) != null) {
-                    sb.append(line).append("");
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "utf-8"))) {
+                    String line = "";
+                    
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line).append("");
+                    }
                 }
 
-                br.close();
-
                 JSONObject obj = new JSONObject(sb.toString()); //CRIA UM JSONOBJECT COM O RETORNO E SEPARA.
-                info = obj.getString("desafio");//JOGA O VALOR SEPARADO EM UMA STRING
-                System.out.println(info);
+                separaJson = obj.getString("desafio");//JOGA O VALOR SEPARADO EM UMA STRING
+                //System.out.println(separaJson);
 
                 return sb.toString();
 
             } else {
 
-                System.err.println("Requisição não foi feita com sucesso.");
+                
                 return "Requisição não foi feita com sucesso. Verifique sua conexão com a internet.";
 
             }
@@ -169,7 +160,7 @@ public class Conexao {
         } catch (IOException e) {
 
             System.err.println(e.toString());
-            return "Erro na conexão. Contate o Administrador.";
+            return "Erro na conexão.";
 
         } finally {
 
@@ -178,20 +169,20 @@ public class Conexao {
             }
         }
 
-        //String teste = (String)sb.toString();
+        
     }
 
     public static byte[] convertStringToByteArray() {
 
-        String stringToConvert = info;
+        String stringToConvert = separaJson;
 
         byte[] theByteArray = stringToConvert.getBytes();
 
         return theByteArray;
 
-    }
+    }//converte o que foi pego do separaJson e transforme em ByteArray
     
-    public String imprimeResultado()
+    public String imprimeResultado() //Função criada apenas para jogar o resultado final em um setText
     {
         return recebeValidacao;
     }

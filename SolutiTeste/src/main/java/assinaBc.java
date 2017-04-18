@@ -28,7 +28,6 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Store;
-import org.bouncycastle.util.encoders.Base64;
 
 
 public class assinaBc {
@@ -50,7 +49,7 @@ public class assinaBc {
         KeyStore keystore = KeyStore.getInstance("PKCS12");
         InputStream is = new FileInputStream(PATH_TO_KEYSTORE);
         keystore.load(is, KEYSTORE_PASSWORD.toCharArray());
-        String alias = keystore.aliases().nextElement().toString();
+        String alias = keystore.aliases().nextElement();
         
         return keystore;
     }
@@ -61,7 +60,7 @@ public class assinaBc {
 
         Certificate[] certchain = (Certificate[]) keystore.getCertificateChain(KEY_ALIAS_IN_KEYSTORE);
 
-        final List<Certificate> certlist = new ArrayList<Certificate>();
+        final List<Certificate> certlist = new ArrayList<>();
 
         for (int i = 0, length = certchain == null ? 0 : certchain.length; i < length; i++) {
             certlist.add(certchain[i]);

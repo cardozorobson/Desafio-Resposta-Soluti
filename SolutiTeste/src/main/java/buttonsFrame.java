@@ -70,31 +70,37 @@ public class buttonsFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(validateDesafio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(buttonSolicitar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(43, 43, 43)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
-                    .addComponent(textResposta))
-                .addContainerGap(125, Short.MAX_VALUE))
+                .addGap(111, 111, 111)
+                .addComponent(validateDesafio)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(textResposta, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(115, 115, 115)
+                                .addComponent(buttonSolicitar, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(82, 82, 82)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(buttonSolicitar, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(validateDesafio, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(textResposta, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(42, 42, 42))
+                .addContainerGap()
+                .addComponent(buttonSolicitar, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addComponent(validateDesafio, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(textResposta, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25))
         );
 
         pack();
@@ -103,7 +109,7 @@ public class buttonsFrame extends javax.swing.JFrame {
     //AÇÃO DO BOTÃO "SOLICITAR DESAFIO"
     private void buttonSolicitarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonSolicitarMouseClicked
         try {
-            //COLOCA O TEXTO NA TELA DE ACORDO COM O RETORNO DADO EM GetDesafio
+            //COLOCA O TEXTO NA TELA DE ACORDO COM O RETORNO DADO EM sb.toString();
             Conexao conexao = new Conexao();
             textDesafio.setText(conexao.requisicaoGet("https://api-prova.lab.ca.inf.br:9445/desafio"));
             
@@ -113,7 +119,7 @@ public class buttonsFrame extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_buttonSolicitarMouseClicked
-
+    
     private void validateDesafioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validateDesafioMouseClicked
         try {
             
@@ -124,7 +130,7 @@ public class buttonsFrame extends javax.swing.JFrame {
             
 
             Conexao conexao = new Conexao();
-            byte[] signedBytes = signer.signPkcs7(conexao.convertStringToByteArray(), signatureGenerator);//ASSINA O BYTE ARRAY CONVERTIDO DE recebeJson
+            byte[] signedBytes = signer.signPkcs7(Conexao.convertStringToByteArray(), signatureGenerator);//ASSINA O BYTE ARRAY CONVERTIDO DE separaJson
             String recebeCrip = new String(Base64.encode(signedBytes));//Atribui a uma string o byte array assinado
             
             String assinaturaFormat = recebeCrip.replaceAll("(.{64})", "$1\n");//quebra automatica a cada 64 caracteres
@@ -137,7 +143,6 @@ public class buttonsFrame extends javax.swing.JFrame {
             
             
             String reposta = conexao.requisicaoPost("https://api-prova.lab.ca.inf.br:9445/desafio",json);
-            //System.out.println(Conexao.sb.toString());
             textResposta.setText(conexao.imprimeResultado());
             
         } catch (Exception ex) {
@@ -179,6 +184,7 @@ public class buttonsFrame extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
 
             }

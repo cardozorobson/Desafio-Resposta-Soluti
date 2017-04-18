@@ -4,11 +4,7 @@
  * and open the template in the editor.
  */
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -20,10 +16,6 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.security.cert.X509Certificate;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
 
@@ -36,18 +28,15 @@ public class GetPostDesafio {
     
     public static String text = "";
     
-    public static String respostaJson;
+    public static String recebeJson;//Recebe o valor que vem do get, sem o parametro
     
-    public static String recebeJson;
-    
-    public static String recebeDesafio;
     
     static URL url;
 
     static URLConnection con;
 
     public static String GetDesafio() throws Exception {
-        // Create a trust manager that does not validate certificate chains
+        // Ignora a cadeia de certificados (SOLUÇÃO PARA O ERRO SSL)
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
             @Override
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -95,54 +84,16 @@ public class GetPostDesafio {
             
         }
             
+      JSONObject parseJson = (JSONObject)new JSONParser().parse(text);
+        
+      recebeJson =  (String) parseJson.get("desafio");
       
-        JSONObject parseJson = (JSONObject)new JSONParser().parse(text);
-        
-        
-       recebeJson =  (String) parseJson.get("desafio");
-       
-       
-        
-        
-        
-           
-        
-        
-        recebeDesafio = text;
-       
-        
-        
-        return text;
+      return text;
         
         
     }
 
-    public static void postDesafio() throws IOException {
-       
-        String url = "https://api-prova.lab.ca.inf.br:9445/desafio";
-        URL myurl = new URL(url);
-        HttpsURLConnection con = (HttpsURLConnection) myurl.openConnection();
-        con.setRequestMethod("POST");
-        String query = respostaJson;
-        con.setRequestProperty("Content-Type", "validation_messages");
-        con.setRequestProperty("Content-Type", "resposta");
-        
-        con.setDoOutput(true);
-        con.setDoInput(true);
-
-        try (DataOutputStream output = new DataOutputStream(con.getOutputStream())) {
-            output.writeBytes(query);
-        }
-        System.out.println("Resp Code:" + con.getResponseCode());
-        System.out.println("Resp Message:" + con.getResponseMessage());
-        System.out.println(con.getHeaderFields());
-        //PrintWriter out = response.getWriter();
-        
-        
-        
-   
-
-    }
+  
     
      public static byte [] convertStringToByteArray()
     {

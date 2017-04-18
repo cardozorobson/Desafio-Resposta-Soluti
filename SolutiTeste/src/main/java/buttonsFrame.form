@@ -24,36 +24,39 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="170" max="-2" attributes="0"/>
-                      <Component id="validateDesafio" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="189" max="32767" attributes="0"/>
-                  </Group>
+              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="validateDesafio" max="32767" attributes="0"/>
+                  <Component id="buttonSolicitar" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="207" max="-2" attributes="0"/>
-              <Component id="buttonSolicitar" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="jScrollPane1" pref="455" max="32767" attributes="0"/>
+                  <Component id="textResposta" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace pref="125" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="buttonSolicitar" min="-2" pref="60" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" min="-2" pref="38" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="70" max="-2" attributes="0"/>
-              <Component id="validateDesafio" min="-2" pref="59" max="-2" attributes="0"/>
-              <EmptySpace pref="18" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
+                      <Component id="jScrollPane1" min="-2" pref="56" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="buttonSolicitar" min="-2" pref="57" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace pref="86" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="validateDesafio" min="-2" pref="59" max="-2" attributes="0"/>
+                  <Component id="textResposta" min="-2" pref="52" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -92,5 +95,7 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JTextField" name="textResposta">
+    </Component>
   </SubComponents>
 </Form>

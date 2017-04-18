@@ -1,13 +1,10 @@
 
 
-import com.google.gson.Gson;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.security.KeyStore;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.util.encoders.Base64;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -40,6 +37,7 @@ public class buttonsFrame extends javax.swing.JFrame {
         validateDesafio = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         textDesafio = new javax.swing.JTextArea();
+        textResposta = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -72,30 +70,31 @@ public class buttonsFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(170, 170, 170)
-                        .addComponent(validateDesafio)
-                        .addGap(0, 189, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(207, 207, 207)
-                .addComponent(buttonSolicitar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(27, 27, 27)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(validateDesafio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(buttonSolicitar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(43, 43, 43)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
+                    .addComponent(textResposta))
+                .addContainerGap(125, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(buttonSolicitar, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(70, 70, 70)
-                .addComponent(validateDesafio, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(82, 82, 82)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(buttonSolicitar, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(validateDesafio, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textResposta, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(42, 42, 42))
         );
 
         pack();
@@ -105,7 +104,8 @@ public class buttonsFrame extends javax.swing.JFrame {
     private void buttonSolicitarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonSolicitarMouseClicked
         try {
             //COLOCA O TEXTO NA TELA DE ACORDO COM O RETORNO DADO EM GetDesafio
-            textDesafio.setText(GetPostDesafio.GetDesafio());
+            Conexao conexao = new Conexao();
+            textDesafio.setText(conexao.requisicaoGet("https://api-prova.lab.ca.inf.br:9445/desafio"));
             
         } catch (Exception ex) {
             Logger.getLogger(buttonsFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -123,34 +123,26 @@ public class buttonsFrame extends javax.swing.JFrame {
             CMSSignedDataGenerator signatureGenerator = signer.setUpProvider(keyStore);
             
 
+            Conexao conexao = new Conexao();
+            byte[] signedBytes = signer.signPkcs7(conexao.convertStringToByteArray(), signatureGenerator);//ASSINA O BYTE ARRAY CONVERTIDO DE recebeJson
+            String recebeCrip = new String(Base64.encode(signedBytes));//Atribui a uma string o byte array assinado
             
-            byte[] signedBytes = signer.signPkcs7(GetPostDesafio.convertStringToByteArray(), signatureGenerator);
-            String recebeCrip = new String(Base64.encode(signedBytes));
-            
-            
-            String assinaturaFormat = recebeCrip.replaceAll("(.{64})", "$1\n");
-            
-            String resposta = ("-----BEGIN PKCS7-----\n" + assinaturaFormat + "\n-----END PKCS7-----");
-            
+            String assinaturaFormat = recebeCrip.replaceAll("(.{64})", "$1\n");//quebra automatica a cada 64 caracteres
+            String resposta = ("-----BEGIN PKCS7-----\n" + assinaturaFormat + "\n-----END PKCS7-----");//Add o cabeçalho PKCS7 na assinatura
             //System.out.println(resposta);
-            
-           
-            Gson gson = new Gson();
-            GetPostDesafio.respostaJson = gson.toJson(resposta);
-            //System.out.println(GetPostDesafio.respostaJson);
-            GetPostDesafio.postDesafio();
-            
-            
-            
-               
-            
-            
-            
 
+            TransformaJson<Resposta> tJson = new TransformaJson<Resposta>();
+            Resposta resp = new Resposta(resposta);
+            org.json.JSONObject json = tJson.converteJSON(resp);
+            
+            
+            String reposta = conexao.requisicaoPost("https://api-prova.lab.ca.inf.br:9445/desafio",json);
+            //System.out.println(Conexao.sb.toString());
+            textResposta.setText(conexao.imprimeResultado());
+            
         } catch (Exception ex) {
             Logger.getLogger(buttonsFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-
 
     }//GEN-LAST:event_validateDesafioMouseClicked
 
@@ -197,6 +189,7 @@ public class buttonsFrame extends javax.swing.JFrame {
     private javax.swing.JButton buttonSolicitar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea textDesafio;
+    private javax.swing.JTextField textResposta;
     private javax.swing.JButton validateDesafio;
     // End of variables declaration//GEN-END:variables
 }

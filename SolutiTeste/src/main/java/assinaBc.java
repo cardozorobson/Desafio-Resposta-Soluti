@@ -34,12 +34,11 @@ import org.bouncycastle.util.encoders.Base64;
 public class assinaBc {
     
     
-    public static String recebeCrip = "";
     
     
-    private static final String PATH_TO_KEYSTORE = "/home/robsoncardozo/Documentos/TesteSoluti/SolutiTeste/teste.p12";
+    
+    private static final String PATH_TO_KEYSTORE = "/home/robsoncardozo/Documentos/TesteSoluti/SolutiTeste/novo_cert.pfx";
     private static final String KEY_ALIAS_IN_KEYSTORE = "1";
-    private static final String KEY_FILE = "/home/robsoncardozo/Documentos/TesteSoluti/SolutiTeste/private.key";
     private static final String KEYSTORE_PASSWORD = "123456";
     private static final String SIGNATUREALGO = "SHA256withRSA";
 
